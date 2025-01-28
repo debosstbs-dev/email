@@ -8,6 +8,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 import os
+import uvicorn
 
 app = FastAPI()
 
@@ -80,4 +81,8 @@ async def submit_form(
 
         return {"message": "Form submitted successfully"}
     except Exception as e:
-        return {"error": str(e)} 
+        return {"error": str(e)}
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port) 
