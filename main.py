@@ -21,6 +21,88 @@ os.makedirs(TEMPLATES_DIR, exist_ok=True)
 os.makedirs(STATIC_DIR, exist_ok=True)
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 
+# Create form.html if it doesn't exist
+FORM_HTML_PATH = os.path.join(TEMPLATES_DIR, "form.html")
+if not os.path.exists(FORM_HTML_PATH):
+    print(f"Creating template file at: {FORM_HTML_PATH}")
+    form_html_content = """<!DOCTYPE html>
+<html>
+<head>
+    <title>VPN Configuration Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="email"], input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h2>VPN Configuration Form</h2>
+    <form action="/submit" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="sender_email">Your Email:</label>
+            <input type="email" id="sender_email" name="sender_email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="country_name">Country Name:</label>
+            <input type="text" id="country_name" name="country_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="vpn_name">VPN Name:</label>
+            <input type="text" id="vpn_name" name="vpn_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="network">Network:</label>
+            <input type="text" id="network" name="network" required>
+        </div>
+
+        <div class="form-group">
+            <label for="file">Upload File:</label>
+            <input type="file" id="file" name="file" required>
+        </div>
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>"""
+    with open(FORM_HTML_PATH, "w") as f:
+        f.write(form_html_content)
+    print(f"Template file created successfully")
+else:
+    print(f"Template file already exists at: {FORM_HTML_PATH}")
+
+print(f"Templates directory contents: {os.listdir(TEMPLATES_DIR)}")
+
 app = FastAPI()
 
 # Mount templates with absolute path
