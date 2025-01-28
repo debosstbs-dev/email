@@ -35,5 +35,9 @@ ENV/
 *.swo
 
 # Application specific
-uploads/
-*.log 
+uploads/*
+*.log
+
+# Don't ignore these
+!templates/
+!templates/* 
