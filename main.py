@@ -10,18 +10,35 @@ from email.mime.application import MIMEApplication
 import os
 import uvicorn
 
+# Get the absolute path of the current directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+UPLOADS_DIR = os.path.join(BASE_DIR, "uploads")
+
+# Ensure directories exist
+os.makedirs(TEMPLATES_DIR, exist_ok=True)
+os.makedirs(STATIC_DIR, exist_ok=True)
+os.makedirs(UPLOADS_DIR, exist_ok=True)
+
 app = FastAPI()
 
-# Mount templates
-templates = Jinja2Templates(directory="templates")
+# Mount templates with absolute path
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 # Only mount static files if directory exists
-if os.path.exists("static"):
-    app.mount("/static", StaticFiles(directory="static"), name="static")
+if os.path.exists(STATIC_DIR):
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_form(request: Request):
-    return templates.TemplateResponse("form.html", {"request": request})
+    try:
+        return templates.TemplateResponse("form.html", {"request": request})
+    except Exception as e:
+        print(f"Error loading template: {str(e)}")
+        print(f"Templates directory: {TEMPLATES_DIR}")
+        print(f"Directory contents: {os.listdir(TEMPLATES_DIR)}")
+        raise
 
 @app.post("/submit")
 async def submit_form(
@@ -32,8 +49,7 @@ async def submit_form(
     file: UploadFile = File(...)
 ):
     # Save the uploaded file temporarily
-    file_location = f"uploads/{file.filename}"
-    os.makedirs("uploads", exist_ok=True)
+    file_location = os.path.join(UPLOADS_DIR, file.filename)
     with open(file_location, "wb+") as file_object:
         file_object.write(await file.read())
 
